@@ -6,7 +6,7 @@ import './style.css'
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 <header class="header">
 <div class="container text-center">
-  <img src="/src/img/logo/logo.svg" width="92" alt="rolls">
+  <img src="./src/img/logo/logo.svg" width="92" alt="rolls">
   <div class="display-4">Roll delivery</div>
   <p class="lead">Fast and delicious</p>
 </div>
