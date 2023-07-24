@@ -36,7 +36,7 @@ window.addEventListener("click", (e: Event) => {
       });
     };
 
-	  if (element.dataset.actionBasket === "plus") {
+    if (element.dataset.actionBasket === "plus") {
       changeAmount(++currentValue);
     } else if (element.dataset.actionBasket === "minus") {
       if (currentValue > 1) {
@@ -118,12 +118,15 @@ const basketOutput = () => {
             </div>
           </div>
       `;
+    basketWrapper.appendChild(newElem);
+  });
+
+  if (basketProducts.length) {
     totalBlock.innerHTML = `
       <p><span class="h5">Delivery:</span> <span class="delivery-cost free">${ getDeliveryPrice() }</span> </p>
       <p><span class="h5">Total:</span> <span class="total-price">${ getBasketPrice() } ₴</span></p>
     `;
-    basketWrapper.appendChild(newElem);
-  });
+  }
 };
 
 const getBasketPrice = (): number => {

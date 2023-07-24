@@ -10,7 +10,7 @@ export const submitForm = (email: string) => {
     document.querySelector(".form-group")!.innerHTML = '<input type="text" class="form-control" placeholder="Enter your e-mail">';
     showError = false;
 
-	  emailjs
+    emailjs
       .send(
         "service_olg381s",
         "template_o9kgqe7",
