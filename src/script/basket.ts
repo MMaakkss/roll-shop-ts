@@ -1,15 +1,21 @@
 import { products } from "../data/products";
 import { IBasketProduct } from "../model/product";
 
-let basketProducts: IBasketProduct[] = [];
 const storedProducts: IBasketProduct[] = localStorage.getItem("storedProducts")
   ? JSON.parse(localStorage.getItem("storedProducts")!)
   : [];
 
-if (storedProducts.length) basketProducts = [...storedProducts];
+let basketProducts: IBasketProduct[] = storedProducts;
 
 let basketWrapper: HTMLElement;
 let totalBlock: HTMLElement;
+
+const changeAmount = (count: number, id: number) => {
+  basketProducts.map((product) => {
+    if (product.id == id) product.count += count;
+    return product;
+  });
+};
 
 window.addEventListener("load", () => {
   basketWrapper = document.querySelector(".cart-wrapper")!;
@@ -21,56 +27,45 @@ window.addEventListener("load", () => {
 window.addEventListener("click", (e: Event) => {
   const element: HTMLElement = e.target as HTMLElement;
 
-  if (element.dataset.actionBasket) {
-    const product: HTMLElement = element.closest(".cart-item") as HTMLElement;
-    const id: number = Number(product.dataset.id);
+  if (!element.dataset.actionBasket) return;
 
-    const counter: HTMLElement = element.closest(".counter-wrapper")!.querySelector("[data-counter]")!;
-    let currentValue: number = Number(counter.innerHTML);
+  const product: HTMLElement = element.closest(".cart-item") as HTMLElement;
+  const id: number = Number(product.dataset.id);
 
+  const counter: HTMLElement = element.closest(".counter-wrapper")!.querySelector("[data-counter]")!;
+  let currentValue: number = Number(counter.innerHTML);
 
-    const changeAmount = (count: number) => {
-      basketProducts.map((product) => {
-        if (product.id == id) product.count = count;
-        return product;
-      });
-    };
-
-    if (element.dataset.actionBasket === "plus") {
-      changeAmount(++currentValue);
-    } else if (element.dataset.actionBasket === "minus") {
-      if (currentValue > 1) {
-        changeAmount(--currentValue);
-      } else {
-        basketProducts = basketProducts.filter((product) => product.id !== id);
-
-        if (!basketProducts.length) clearBasket();
-      }
-    }
-
-    basketOutput();
-    storeProducts();
+  if (element.dataset.actionBasket === "plus") {
+    changeAmount(1, id);
+  } else if (element.dataset.actionBasket === "minus") {
+    currentValue > 1 ? changeAmount(-1, id) : deleteProduct(id);
   }
+
+  basketOutput();
+  storeProducts();
 });
 
+const deleteProduct = (id: number) => {
+  basketProducts = basketProducts.filter((product) => product.id !== id);
+}
+
 export const addToBasket = (id: number, count: number) => {
-  const selectedProduct = products.filter((product) => product.id === id)[0];
+  const selectedProduct = products.find((product) => product.id === id);
+
+  if (!selectedProduct) return;
 
   const isInArray: boolean = basketProducts.some(
     (product) => product.id === id
   );
 
   if (isInArray) {
-    basketProducts.map((product) => {
-      if (product.id == id) product.count += count;
-      return product;
-    });
+    changeAmount(count, id);
   } else {
     basketProducts.push({ ...selectedProduct, count: count });
   }
 
-  storeProducts()
   basketOutput();
+  storeProducts();
 };
 
 export const clearBasket = () => {
@@ -86,6 +81,8 @@ export const clearBasket = () => {
 export const getBasketLength = () => basketProducts.length;
 
 const basketOutput = () => {
+  if (!basketProducts.length) clearBasket();
+
   if (basketProducts.length) basketWrapper.innerHTML = "";
 
   basketProducts.forEach((product) => {

@@ -22,9 +22,9 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Your order</h4>
-        
+
         <div class="cart-wrapper"></div>
-        
+
         <div class="cart-total"></div>
 
       </div>
@@ -55,6 +55,8 @@ window.addEventListener("click", (e: Event) => {
       element.closest(".card-body")!.querySelector("[data-counter]")!.innerHTML
     );
     addToBasket(id, count);
+
+    return;
   }
 
   if (element.dataset.action) {
@@ -74,7 +76,6 @@ window.addEventListener("click", (e: Event) => {
         counter.innerHTML = String(--currentValue);
       }
     }
-
   }
 });
 
